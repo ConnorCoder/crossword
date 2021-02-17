@@ -71,7 +71,11 @@ function reload() {
       e[i].className = "sqr nv";
     }else {
       a[i] = e[i].value[0];
-      e[i].className = "sqr";
+      if(e[i].value === "?") {
+        e[i].className = "sqr q";
+      }else {
+        e[i].className = "sqr";
+      }
     }
   }
   history.pushState("","",`?${w}x${h}$${dash(true, a.join(""))}`);
