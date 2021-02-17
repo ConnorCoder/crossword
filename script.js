@@ -1,3 +1,5 @@
+// Automatically move to the next input field when ANY character is entered (including delete key, and invalid keys)
+
 let w, h, c;
 
 window.onload = function() {
@@ -25,19 +27,82 @@ window.onresize = function() {
   if((innerHeight - (4 * h)) / h < wh) {
     wh = (innerHeight - (4 * h)) / h;
   }
+  wh -= 1;
   document.getElementById("s").innerHTML = `.sqr {width:${wh}px;height:${wh}px;font-size:${wh / 1.5}px}`;
+}
+let cArrow = "";
+window.onkeydown = function(e) {
+  let a = "";
+  if(e.key === "ArrowLeft") {
+    a = "←";
+  }else if(e.key === "ArrowUp") {
+    a = "↑";
+  }else if(e.key === "ArrowRight") {
+    a = "→";
+  }else if(e.key === "ArrowDown") {
+    a = "↓";
+  }
+  if(a !== "") {
+    if(cArrow === a) {
+      cArrow = "";
+      a = "";
+    }else {
+      cArrow = a;
+    }
+    document.getElementById("a").textContent = a;
+  }
+}
+window.onmousemove = function(e) {
+  try{
+    document.getElementById("a").style = `display:block;color:#6342f5;font-weight:bolder;font-size:40px;position:fixed;left:${e.clientX + 10}px;top:${e.clientY - 10}px;`;
+  }catch(err){}
 }
 function createGrid(d) {
   let sty = document.createElement("style");
   sty.id = "s";
   document.body.appendChild(sty);
+
+  let arr = document.createElement("span");
+  arr.id = "a";
+  arr.style = "position:fixed;left:0px;top:0px;"
+  arr.textContent = "";
+  document.body.appendChild(arr);
+
+  let t = 0;
   for(let i=0;i<h;i++) {
     for(let z=0;z<w;z++) {
       let a = document.createElement("input");
       a.className = "sqr";
+      a.id = `sqr${t}`;
+      t++;
       a.addEventListener("change", e => {
         reload();
       });
+      a.onkeydown = function(e) {
+        e.preventDefault();
+        e.target.value = (("abcdefghijklmnopqrstuvwxyz?".indexOf(e.key) !== -1) ? e.key:"");
+        e.target.dispatchEvent(new Event("change"));
+        if((e.keyCode >= 65 && e.keyCode <= 90) || e.keyCode === 8 || e.keyCode === 191) {
+          let offset = 0;
+          if(cArrow === "←") {
+            offset = -1;
+          }else if(cArrow === "↑"){
+            offset = -1 * w;
+          }else if(cArrow === "→") {
+            offset = 1;
+          }else if(cArrow === "↓") {
+            offset = w;
+          }
+          if(e.keyCode === 8) {
+            offset *= -1;
+            document.getElementById(`sqr${parseInt(e.target.id.slice(3)) + offset}`).value = "";
+            reload();
+          }
+          if(offset !== 0) {
+            document.getElementById(`sqr${parseInt(e.target.id.slice(3)) + offset}`).focus();
+          }
+        }
+      }
 
       document.body.appendChild(a);
     }
