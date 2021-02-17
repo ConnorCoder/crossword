@@ -51,6 +51,9 @@ function createGrid(d) {
         e[i].className = "sqr nv";
       }else {
         e[i].value = c[i];
+        if(e[i].value === "?") {
+          e[i].className = "sqr q";
+        }
       }
     }
   }
