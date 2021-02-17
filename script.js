@@ -65,7 +65,7 @@ function reload() {
       e[i].value = e[i].value[0];
       a[i] = e[i].value;
     }
-    if(!(new RegExp("[a-z]","i").test(e[i].value))) {
+    if(!(new RegExp("[a-z?]","i").test(e[i].value))) {
       e[i].value = "";
       a[i] = "-";
       e[i].className = "sqr nv";
